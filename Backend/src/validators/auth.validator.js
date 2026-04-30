@@ -22,6 +22,8 @@ export const validateRegisterUser = [
         .matches(/^\d{10}$/).withMessage("Contact must be a 10-digit number"),
     body("password")
         .isLength({ min: 3 }).withMessage("Password must be at least 3 characters long"),
+    body("isSeller")
+        .isBoolean().withMessage("isSeller must either be true or false"),
 
     validateRequest
 ]
