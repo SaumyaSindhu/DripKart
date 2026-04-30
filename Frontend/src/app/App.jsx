@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import './App.scss';
+import { RouterProvider } from "react-router";
+import { routes } from './app.routes';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
-      <h1>DripKart</h1>
+      <RouterProvider router={routes} />
     </>
   )
 }
