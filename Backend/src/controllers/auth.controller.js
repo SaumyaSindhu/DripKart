@@ -54,3 +54,31 @@ export async function registerController(req, res) {
         })
     }
 }
+
+export async function loginController(req, res) {
+    
+    const { email, password } = req.body;
+
+    try {
+
+        const user = await userModel.findOne({ email })
+
+        if(!user) {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
+
+        const isMatch = await user.comparePassword(password);
+
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
+
+        await sendTokenResponse(user, res, "User logged in successfully");
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
