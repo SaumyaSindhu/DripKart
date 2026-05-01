@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import './register.scss';
+import { useAuth } from '../hook/useAuth.js';
+import { useNavigate } from 'react-router';
 
 const Register = () => {
+
+  const { handleRegister } = useAuth();
+  const navigate = useNavigate(); 
+
   const [formData, setFormData] = useState({
     fullname: '',
     email: '',
@@ -10,8 +16,8 @@ const Register = () => {
     isSeller: false,
   });
 
-  const handleChange = (event) => {
-    const { name, value, checked, type } = event.target;
+  const handleChange = (e) => {
+    const { name, value, checked, type } = e.target;
 
     setFormData((currentData) => ({
       ...currentData,
@@ -19,8 +25,20 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+    await handleRegister({
+      fullname: formData.fullname,
+      email: formData.email,
+      contact: formData.contact,
+      password: formData.password,
+      isSeller: formData.isSeller
+    });
+
+    navigate("/");
+
   };
 
   return (
