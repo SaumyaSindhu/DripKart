@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './register.scss';
 import { useAuth } from '../hook/useAuth.js';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 const Register = () => {
 
@@ -123,6 +123,13 @@ const Register = () => {
           <button type="submit" className="register-form__button">
             Register
           </button>
+
+          <p className="register-footer">
+            Already have an account?{" "}
+            <Link to="/login" className="login-link">
+              Login
+            </Link>
+          </p>
         </form>
       </section>
     </main>
