@@ -45,7 +45,7 @@
 .login-page__planet {
     position: absolute;
     left: 50%;
-    bottom: -31vw;
+    top: 31vw;
     width: min(115rem, 150vw);
     aspect-ratio: 1;
     transform: translateX(-50%);
@@ -194,7 +194,7 @@
 }
 
 .login-form__button:hover {
-    transform: translateY(-1px);
+    transform: translateY(-5px);
     box-shadow: 0 1.2rem 2.25rem rgba(89, 70, 255, 0.42);
 }
 
@@ -223,4 +223,17 @@
         bottom: -44vw;
         width: 190vw;
     }
+}
+
+.login-card {
+    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.login-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow:
+        0 2.4rem 6rem rgba(0, 0, 0, 0.55),
+        0 0 2.5rem rgba(140, 90, 255, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    border-color: rgba(174, 248, 255, 0.28);
 }

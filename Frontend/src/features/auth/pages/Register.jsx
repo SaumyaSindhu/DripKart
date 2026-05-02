@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './register.scss';
 import { useAuth } from '../hook/useAuth.js';
 import { Link, useNavigate } from 'react-router';
+import ContinueWithGoogle from '../components/ContinueWithGoogle.jsx';
 
 const Register = () => {
 
@@ -123,6 +124,8 @@ const Register = () => {
           <button type="submit" className="register-form__button">
             Register
           </button>
+
+          <ContinueWithGoogle />
 
           <p className="register-footer">
             Already have an account?{" "}

@@ -3,6 +3,7 @@ import { useAuth } from "../hook/useAuth.js";
 import { Link, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import "./login.scss";
+import ContinueWithGoogle from "../components/ContinueWithGoogle.jsx";
 
 const Login = () => {
   const { handleLogin } = useAuth();
@@ -84,6 +85,8 @@ const Login = () => {
           <button type="submit" className="login-form__button">
             Login
           </button>
+
+          <ContinueWithGoogle />
 
           <p className="login-footer">
             {error === "User not registered" ? (

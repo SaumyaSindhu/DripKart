@@ -82,3 +82,37 @@ export async function loginController(req, res) {
         })
     }
 }
+
+export async function googleCallbackController(req, res) {
+    try {
+
+        const { id, displayName, emails, photos } = req.user;
+        const email = emails[0].value;
+        const profilePic = photos[0].value;
+
+        let user = await userModel.findOne({ email })
+
+        if (!user) {
+            user = await userModel.create({
+                fullname: displayName,
+                email,
+                googleId: id
+            })
+            
+        }
+
+        const token = jwt.sign({
+            id: user._id
+        }, config.JWT_SECRET, { expiresIn: "7d" })
+
+        res.cookie("token", token)
+
+        res.redirect("http://localhost:5173/")
+        
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
