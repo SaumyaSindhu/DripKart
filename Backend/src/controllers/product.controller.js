@@ -38,3 +38,29 @@ export async function createProductController(req, res) {
     });
   }
 }
+
+export async function getSellerProductsController(req, res) {
+  const seller = req.user;
+
+  try {
+
+    const products = await productModel.find({ seller: seller._id})
+
+    if (!products) {
+      return res.status(404).json({
+        message: "No products found"
+      })
+    }
+
+    res.status(200).json({
+      message: "Products fetched successfully",
+      products
+    })
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+}
