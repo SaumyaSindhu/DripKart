@@ -1,52 +1,86 @@
 .googleRegister {
-  width: 100%;
-  height: 3rem;
-  margin-top: 0.4rem;
+    width: 100%;
+    padding: 14px 16px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
 
-  border-radius: 0.58rem;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+    background: transparent;
+    border: 1px solid #e8e2d9;
 
-  background: #ffffff;
+    color: #7a6e63;
+    text-decoration: none;
 
-  color: #1f1b2e;
-  font-weight: 600;
-  font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
 
-  cursor: pointer;
+    cursor: pointer;
 
-  transition: 
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    border-color 180ms ease;
+    transition:
+        all 0.3s ease;
 
-  svg {
-    width: 1.2rem;
-    height: 1.2rem;
-    flex-shrink: 0;
-  }
+    svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
 
-  span {
-    letter-spacing: 0.2px;
-  }
+    span {
+        line-height: 1;
+    }
 
-  &:hover {
-    transform: translateY(-5px);
+    &:hover {
+        border-color: #c9a96e;
+        color: #1b1c1a;
 
-    border-color: rgba(140, 90, 255, 0.35);
+        transform: translateY(-2px);
 
-    box-shadow:
-      0 0.6rem 1.4rem rgba(0, 0, 0, 0.12),
-      0 0 1.2rem rgba(140, 90, 255, 0.18);
-  }
+        box-shadow:
+            0 10px 24px rgba(201, 169, 110, 0.12);
+    }
 
-  &:active {
-    transform: translateY(0);
-    box-shadow:
-      0 0.3rem 0.8rem rgba(0, 0, 0, 0.1);
-  }
+    &:active {
+        transform: translateY(0);
+
+        box-shadow:
+            0 4px 12px rgba(201, 169, 110, 0.08);
+    }
+
+    &:focus {
+        outline: none;
+
+        box-shadow:
+            0 0 0 1px #c9a96e,
+            0 0 0 4px rgba(201, 169, 110, 0.08);
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 768px) {
+        padding: 13px 14px;
+        font-size: 13px;
+        gap: 10px;
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        padding: 12px;
+        font-size: 12px;
+        letter-spacing: 0.03em;
+
+        svg {
+            width: 17px;
+            height: 17px;
+        }
+    }
 }

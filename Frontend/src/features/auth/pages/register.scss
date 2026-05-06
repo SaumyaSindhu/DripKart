@@ -1,283 +1,362 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+::selection {
+    background: rgba(201, 169, 110, 0.3);
+}
+
 .register-page {
-    position: relative;
     min-height: 100vh;
-    width: 100%;
-    overflow: hidden;
-    display: grid;
-    place-items: center;
-    padding: 7rem 1.25rem 3rem;
-    color: #f7f1ff;
-    background:
-        radial-gradient(circle at 50% 12%, rgba(161, 75, 255, 0.48), transparent 28rem),
-        radial-gradient(circle at 50% 70%, rgba(80, 24, 180, 0.42), transparent 22rem),
-        linear-gradient(180deg, #080615 0%, #100823 48%, #05040b 100%);
-}
-
-.register-page__stars,
-.register-page__stars::before,
-.register-page__stars::after {
-    position: absolute;
-    inset: 0;
-    content: "";
-    background-image:
-        radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 1px, transparent 1.6px),
-        radial-gradient(circle, rgba(183, 222, 255, 0.7) 0 1px, transparent 1.7px);
-    background-position:
-        4rem 5rem,
-        10rem 2rem;
-    background-size:
-        9rem 8rem,
-        13rem 11rem;
-    opacity: 0.55;
-}
-
-.register-page__stars::before {
-    transform: translateY(2rem) scale(1.12);
-    opacity: 0.32;
-    filter: blur(0.5px);
-}
-
-.register-page__stars::after {
-    transform: translateY(-1.5rem) scale(0.82);
-    opacity: 0.22;
-}
-
-.register-page__planet {
-    position: absolute;
-    left: 50%;
-    top: 31vw;
-    width: min(115rem, 150vw);
-    aspect-ratio: 1;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at 50% 6%, rgba(190, 130, 255, 0.42), transparent 5%),
-        radial-gradient(ellipse at 50% 2%, rgba(160, 62, 255, 0.95) 0 1.1%, rgba(104, 42, 223, 0.54) 1.5%, transparent 5.8%),
-        radial-gradient(circle at 50% 46%, #0a0714 0 41%, #030207 64%);
-    box-shadow:
-        0 -1.4rem 4rem rgba(139, 70, 255, 0.48),
-        inset 0 1rem 5rem rgba(111, 45, 216, 0.25);
-    pointer-events: none;
-}
-
-.register-card {
-    position: relative;
-    z-index: 1;
-    width: min(100%, 25.5rem);
-    padding: 4.75rem 1.55rem 1.6rem;
-    border: 1px solid rgba(210, 191, 255, 0.16);
-    border-radius: 1.35rem;
-    background:
-        linear-gradient(180deg, rgba(29, 15, 62, 0.66), rgba(11, 7, 25, 0.72)),
-        rgba(12, 8, 28, 0.64);
-    box-shadow:
-        0 1.8rem 5rem rgba(0, 0, 0, 0.42),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(18px);
-}
-
-.register-card::before {
-    position: absolute;
-    inset: 0.85rem;
-    content: "";
-    border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    pointer-events: none;
-}
-
-.register-card__badge {
-    position: absolute;
-    top: -2.4rem;
-    left: 50%;
-    width: 5.4rem;
-    height: 5.4rem;
-    transform: translateX(-50%);
-    display: grid;
-    place-items: center;
-    border-radius: 1.65rem;
-    background:
-        radial-gradient(circle at 36% 26%, rgba(255, 255, 255, 0.96), transparent 0.45rem),
-        linear-gradient(145deg, #74efff 0%, #9b7cff 58%, #efe8ff 100%);
-    box-shadow:
-        0 0.9rem 2.3rem rgba(115, 92, 255, 0.48),
-        inset 0 1px 0 rgba(255, 255, 255, 0.85);
-}
-
-.register-card__badge span {
-    width: 1.9rem;
-    height: 1.9rem;
-    border-radius: 0.55rem;
-    background: #ffffff;
-    transform: rotate(45deg);
-    box-shadow: 0 0 1.3rem rgba(255, 255, 255, 0.9);
-}
-
-.register-card__header {
-    position: relative;
-    text-align: center;
-    margin-bottom: 1.35rem;
-}
-
-.register-card__eyebrow {
-    margin-bottom: 0.35rem;
-    color: #aef8ff;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0;
-    text-transform: uppercase;
-}
-
-.register-card__header h1 {
-    font-size: clamp(1.6rem, 5vw, 2rem);
-    line-height: 1.1;
-    margin-bottom: 0.5rem;
-}
-
-.register-card__header p:last-child {
-    color: rgba(236, 228, 255, 0.62);
-    font-size: 0.9rem;
-    line-height: 1.45;
-}
-
-.register-form {
-    position: relative;
-    display: grid;
-    gap: 0.82rem;
-}
-
-.register-form__field {
-    display: grid;
-    gap: 0.38rem;
-}
-
-.register-form__field span {
-    color: rgba(238, 230, 255, 0.76);
-    font-size: 0.78rem;
-    font-weight: 600;
-}
-
-.register-form__field input {
-    width: 100%;
-    height: 2.95rem;
-    border: 1px solid rgba(221, 204, 255, 0.13);
-    border-radius: 0.55rem;
-    padding: 0 0.95rem;
-    color: #fffaff;
-    background: rgba(9, 6, 22, 0.72);
-    outline: none;
-    transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
-}
-
-.register-form__field input::placeholder {
-    color: rgba(218, 205, 242, 0.36);
-}
-
-.register-form__field input:focus {
-    border-color: rgba(174, 248, 255, 0.68);
-    background: rgba(14, 9, 34, 0.88);
-    box-shadow: 0 0 0 0.22rem rgba(129, 111, 255, 0.18);
-}
-
-.register-form__seller {
     display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    min-height: 2.65rem;
-    padding: 0.15rem 0.1rem;
-    color: rgba(244, 237, 255, 0.82);
-    font-size: 0.9rem;
-    cursor: pointer;
-}
+    background-color: #fbf9f6;
+    font-family: 'Inter', sans-serif;
 
-.register-form__seller input {
-    appearance: none;
-    width: 1.1rem;
-    height: 1.1rem;
-    flex: 0 0 auto;
-    border: 1px solid rgba(226, 211, 255, 0.34);
-    border-radius: 0.28rem;
-    background: rgba(12, 8, 27, 0.82);
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-}
+    /* =========================
+       LEFT PANEL
+    ========================= */
 
-.register-form__seller input::after {
-    width: 0.36rem;
-    height: 0.62rem;
-    content: "";
-    border: solid #ffffff;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg) scale(0);
-    transition: transform 150ms ease;
-}
+    .register-left {
+        width: 50%;
+        position: relative;
+        overflow: hidden;
+        background-color: #f5f3f0;
 
-.register-form__seller input:checked {
-    border-color: transparent;
-    background: linear-gradient(135deg, #75eaff, #805eff);
-    box-shadow: 0 0 1rem rgba(128, 94, 255, 0.52);
-}
+        .register-bg-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            filter: brightness(0.97);
+        }
 
-.register-form__seller input:checked::after {
-    transform: rotate(45deg) scale(1);
-}
+        .register-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to top,
+                rgba(27, 24, 20, 0.62) 0%,
+                rgba(27, 24, 20, 0.08) 45%,
+                transparent 100%
+            );
+        }
 
-.register-form__button {
-    height: 3rem;
-    border: 0;
-    border-radius: 0.58rem;
-    color: #ffffff;
-    background: linear-gradient(100deg, #f2eeff 0%, #9178ff 45%, #5e45ff 100%);
-    box-shadow: 0 1rem 2rem rgba(89, 70, 255, 0.32);
-    font-weight: 800;
-    letter-spacing: 0;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: transform 180ms ease, box-shadow 180ms ease;
-}
+        .register-left-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            padding: 56px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
 
-.register-form__button:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 1.2rem 2.25rem rgba(89, 70, 255, 0.42);
-}
+            .brand-logo {
+                font-family: 'Cormorant Garamond', serif;
+                color: white;
+                font-size: 18px;
+                text-transform: uppercase;
+                letter-spacing: 0.35em;
+            }
 
-.register-form__button:active {
-    transform: translateY(0);
-}
+            .editorial-content {
+                .editorial-heading {
+                    font-family: 'Cormorant Garamond', serif;
+                    color: white;
+                    font-size: 64px;
+                    line-height: 1.08;
+                    font-weight: 300;
+                    margin-bottom: 20px;
+                }
 
-.register-footer {
-  margin-top: 2rem;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #a1a1aa;
-}
-
-.register-card {
-    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
-}
-
-.register-card:hover {
-    transform: translateY(-6px) scale(1.01);
-    box-shadow:
-        0 2.4rem 6rem rgba(0, 0, 0, 0.55),
-        0 0 2.5rem rgba(140, 90, 255, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    border-color: rgba(174, 248, 255, 0.28);
-}
-
-@media (max-width: 520px) {
-    .register-page {
-        padding: 5.7rem 1rem 2rem;
+                .editorial-text {
+                    color: rgba(255, 255, 255, 0.65);
+                    font-size: 14px;
+                    line-height: 1.7;
+                    max-width: 280px;
+                    font-weight: 300;
+                }
+            }
+        }
     }
 
-    .register-card {
-        padding: 4.35rem 1.1rem 1.25rem;
-        border-radius: 1.1rem;
+    /* =========================
+       RIGHT PANEL
+    ========================= */
+
+    .register-right {
+        width: 50%;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 64px 80px;
+        overflow-y: auto;
+
+        .register-form-wrapper {
+            width: 100%;
+            max-width: 380px;
+
+            .mobile-brand {
+                display: none;
+                margin-bottom: 56px;
+
+                .brand-logo {
+                    font-family: 'Cormorant Garamond', serif;
+                    color: #c9a96e;
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.35em;
+                }
+            }
+
+            .register-header {
+                margin-bottom: 48px;
+
+                .register-subtitle {
+                    font-size: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.22em;
+                    margin-bottom: 16px;
+                    font-weight: 500;
+                    color: #c9a96e;
+                }
+
+                .register-title {
+                    font-family: 'Cormorant Garamond', serif;
+                    font-size: 52px;
+                    line-height: 1.1;
+                    font-weight: 300;
+                    color: #1b1c1a;
+                }
+            }
+
+            /* =========================
+               FORM
+            ========================= */
+
+            .register-form {
+                display: flex;
+                flex-direction: column;
+                gap: 36px;
+
+                .form-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+
+                    label {
+                        font-size: 10px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.18em;
+                        font-weight: 500;
+                        color: #7a6e63;
+                    }
+
+                    input {
+                        width: 100%;
+                        border: none;
+                        outline: none;
+                        background: transparent;
+                        padding: 12px 0;
+                        border-bottom: 1px solid #d0c5b5;
+                        font-size: 14px;
+                        color: #1b1c1a;
+                        transition: border-color 0.3s ease;
+
+                        &:focus {
+                            border-bottom-color: #c9a96e;
+                        }
+
+                        &::placeholder {
+                            color: #b5ada3;
+                        }
+                    }
+                }
+
+                /* CHECKBOX */
+
+                .seller-checkbox {
+                    display: flex;
+                    align-items: center;
+                    gap: 14px;
+                    cursor: pointer;
+
+                    .checkbox-wrapper {
+                        position: relative;
+
+                        input {
+                            display: none;
+                        }
+
+                        .custom-checkbox {
+                            width: 16px;
+                            height: 16px;
+                            border: 1px solid #d0c5b5;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            transition: all 0.2s ease;
+
+                            svg {
+                                width: 10px;
+                                height: 10px;
+                            }
+
+                            &.active {
+                                background-color: #c9a96e;
+                                border-color: #c9a96e;
+                            }
+                        }
+                    }
+
+                    span {
+                        font-size: 11px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.15em;
+                        color: #7a6e63;
+                        transition: color 0.2s ease;
+
+                        &.active {
+                            color: #c9a96e;
+                        }
+                    }
+                }
+
+                /* BUTTON */
+
+                .register-btn {
+                    width: 100%;
+                    padding: 16px;
+                    background-color: #1b1c1a;
+                    color: #fbf9f6;
+                    border: none;
+                    cursor: pointer;
+                    text-transform: uppercase;
+                    letter-spacing: 0.25em;
+                    font-size: 11px;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                    margin-top: 8px;
+
+                    &:hover {
+                        background-color: #c9a96e;
+                        color: #1b1c1a;
+                    }
+                }
+
+                /* DIVIDER */
+
+                .divider {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+
+                    .line {
+                        flex: 1;
+                        height: 1px;
+                        background-color: #e4e2df;
+                    }
+
+                    span {
+                        font-size: 10px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.15em;
+                        color: #b5ada3;
+                    }
+                }
+
+                /* FOOTER */
+
+                .footer-text {
+                    text-align: center;
+                    font-size: 11px;
+                    color: #b5ada3;
+
+                    a {
+                        color: #7a6e63;
+                        text-decoration: underline;
+                        text-underline-offset: 3px;
+                        transition: color 0.2s ease;
+
+                        &:hover {
+                            color: #c9a96e;
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    .register-page__planet {
-        bottom: -44vw;
-        width: 190vw;
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 992px) {
+        flex-direction: column;
+
+        .register-left {
+            display: none;
+        }
+
+        .register-right {
+            width: 100%;
+            padding: 50px 28px;
+
+            .register-form-wrapper {
+                max-width: 100%;
+
+                .mobile-brand {
+                    display: block;
+                }
+
+                .register-header {
+                    .register-title {
+                        font-size: 42px;
+                    }
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .register-right {
+            padding: 40px 22px;
+
+            .register-form-wrapper {
+                .register-header {
+                    .register-title {
+                        font-size: 36px;
+                    }
+                }
+
+                .register-form {
+                    gap: 30px;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        .register-right {
+            padding: 32px 18px;
+
+            .register-form-wrapper {
+                .register-header {
+                    .register-title {
+                        font-size: 30px;
+                    }
+                }
+
+                .register-form {
+                    .seller-checkbox {
+                        align-items: flex-start;
+                    }
+                }
+            }
+        }
     }
 }
-
