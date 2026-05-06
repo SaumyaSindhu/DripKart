@@ -7,6 +7,7 @@ import "./login.scss";
 const Login = () => {
   const { handleLogin } = useAuth();
   const navigate = useNavigate();
+  const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -15,6 +16,7 @@ const Login = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setError("");
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -22,18 +24,18 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const user = await handleLogin({
+      const data = await handleLogin({
         email: formData.email,
         password: formData.password,
       });
 
-      if (user.role === "buyer") {
-        navigate("/");
-      } else if (user.role === "seller") {
+      if (data?.success) {
         navigate("/seller/dashboard");
+      } else {
+        setError("Login failed. Please check your credentials.");
       }
-    } catch (error) {
-      console.error("Login failed", error);
+    } catch (err) {
+      setError(err?.response?.data?.message || "Login failed. Please try again.");
     }
   };
 
@@ -83,7 +85,7 @@ const Login = () => {
               <h1 className="login-title">Enter the Vault</h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="login-form">
+            <form className="login-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="login-email">Email Address</label>
 
@@ -98,7 +100,6 @@ const Login = () => {
                 />
               </div>
 
-              {/* PASSWORD */}
               <div className="form-group">
                 <div className="password-header">
                   <label htmlFor="login-password">Password</label>
@@ -117,12 +118,12 @@ const Login = () => {
                 />
               </div>
 
-              {/* BUTTON */}
               <button type="submit" className="login-btn">
                 Sign In
               </button>
 
-              {/* DIVIDER */}
+              {error && <p className="login-error">{error}</p>}
+
               <div className="divider">
                 <div className="line"></div>
 
@@ -131,10 +132,8 @@ const Login = () => {
                 <div className="line"></div>
               </div>
 
-              {/* GOOGLE */}
               <ContinueWithGoogle />
 
-              {/* FOOTER */}
               <p className="footer-text">
                 Don&apos;t have an account? <a href="/register">Sign up</a>
               </p>

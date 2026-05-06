@@ -1,9 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
-import { useProduct } from "../hook/useProduct.js";
+import React, { useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router";
+import { useProduct } from "../hook/useProduct";
 import "./createProduct.scss";
+
+const CURRENCIES = ["INR", "USD", "EUR", "GBP"];
+const MAX_IMAGES = 7;
 
 const CreateProduct = () => {
   const { handleCreateProduct } = useProduct();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -11,280 +16,276 @@ const CreateProduct = () => {
     priceAmount: "",
     priceCurrency: "INR",
   });
+
   const [images, setImages] = useState([]);
-  const [status, setStatus] = useState({
-    type: "",
-    message: "",
-  });
+  const [isDragging, setIsDragging] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const imagePreviews = useMemo(
-    () =>
-      images.map((image) => ({
-        name: image.name,
-        size: image.size,
-        url: URL.createObjectURL(image),
-      })),
-    [images],
-  );
+  const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    return () => {
-      imagePreviews.forEach((image) => URL.revokeObjectURL(image.url));
-    };
-  }, [imagePreviews]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    setFormData((currentData) => ({
-      ...currentData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
   };
 
-  const handleImageChange = (event) => {
-    const selectedImages = Array.from(event.target.files || []);
+  const addFiles = (files) => {
+    const remaining = MAX_IMAGES - images.length;
 
-    setImages((currentImages) => {
-      const nextImages = [...currentImages, ...selectedImages].slice(0, 7);
+    if (remaining <= 0) return;
 
-      if (currentImages.length + selectedImages.length > 7) {
-        setStatus({
-          type: "warning",
-          message: "You can upload a maximum of 7 product images.",
-        });
-      } else {
-        setStatus({
-          type: "",
-          message: "",
-        });
+    const toAdd = Array.from(files).slice(0, remaining);
+
+    const newImages = toAdd.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setImages((prev) => [...prev, ...newImages]);
+  };
+
+  const handleFileChange = (e) => {
+    addFiles(e.target.files);
+    e.target.value = "";
+  };
+
+  const handleDrop = useCallback(
+    (e) => {
+      e.preventDefault();
+
+      setIsDragging(false);
+
+      if (e.dataTransfer.files.length) {
+        addFiles(e.dataTransfer.files);
       }
+    },
+    [images],
+  );
 
-      return nextImages;
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const removeImage = (index) => {
+    setImages((prev) => {
+      const updated = [...prev];
+
+      URL.revokeObjectURL(updated[index].preview);
+
+      updated.splice(index, 1);
+
+      return updated;
     });
-
-    event.target.value = "";
   };
 
-  const handleRemoveImage = (imageIndex) => {
-    setImages((currentImages) =>
-      currentImages.filter((_, index) => index !== imageIndex),
-    );
-  };
-
-  const handleSubmit = async (event) => {
-
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     setIsSubmitting(true);
 
-    setStatus({
-      type: "",
-      message: "",
-    });
-
     try {
-      const productData = new FormData();
+      const data = new FormData();
 
-      productData.append("title", formData.title.trim());
-      productData.append("description", formData.description.trim());
-      productData.append("priceAmount", Number(formData.priceAmount));
-      productData.append("priceCurrency", formData.priceCurrency);
-      images.forEach((image) => productData.append("images", image));
+      data.append("title", formData.title);
+      data.append("description", formData.description);
+      data.append("priceAmount", formData.priceAmount);
+      data.append("priceCurrency", formData.priceCurrency);
 
-      await handleCreateProduct(productData);
+      images.forEach((img) => {
+        data.append("images", img.file);
+      });
 
-      setFormData({
-        title: "",
-        description: "",
-        priceAmount: "",
-        priceCurrency: "INR",
-      });
-      setImages([]);
-      setStatus({
-        type: "success",
-        message: "Product created successfully.",
-      });
-    } catch (error) {
-      setStatus({
-        type: "error",
-        message:
-          error?.response?.data?.message ||
-          "Product could not be created. Please try again.",
-      });
+      await handleCreateProduct(data);
+
+      navigate("/seller/Dashboard");
+    } catch (err) {
+      console.error("Failed to create product", err);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <main className="create-product-page">
-      <section className="create-product-shell" aria-labelledby="product-title">
-        <div className="create-product-hero">
-          <p className="create-product-hero__eyebrow">Seller Studio</p>
-          <h1 id="product-title">Create a premium product drop</h1>
-          <p>
-            Add sharp details, polished pricing, and a gallery that makes your
-            product feel ready for the spotlight.
-          </p>
+    <>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+      />
 
-          <div className="create-product-hero__metrics" aria-label="Product setup summary">
-            <span>{images.length}/7 images</span>
-            <span>{formData.priceCurrency}</span>
-            <span>Live preview</span>
+      <div className="create-product-page">
+        <div className="create-product-container">
+          {/* TOP BAR */}
+          <div className="top-bar">
+            <button onClick={() => navigate(-1)} className="back-btn">
+              ←
+            </button>
+
+            <span className="brand-logo">DRIPKART.</span>
           </div>
-        </div>
 
-        <form className="create-product-form" onSubmit={handleSubmit}>
-          <div className="create-product-form__grid">
-            <section className="product-panel product-panel--details">
-              <div className="product-panel__header">
-                <span>01</span>
-                <div>
-                  <h2>Product details</h2>
-                  <p>Keep the title clean and the description persuasive.</p>
-                </div>
-              </div>
+          {/* HEADER */}
+          <div className="page-header">
+            <h1>New Listing</h1>
 
-              <label className="product-field">
-                <span>Product title</span>
-                <input
-                  type="text"
-                  name="title"
-                  placeholder="Oversized cotton streetwear hoodie"
-                  value={formData.title}
-                  onChange={handleChange}
-                  maxLength={100}
-                  required
-                />
-              </label>
+            <div className="gold-line"></div>
+          </div>
 
-              <label className="product-field">
-                <span>Description</span>
-                <textarea
-                  name="description"
-                  placeholder="Describe the fit, fabric, finish, and why shoppers will want it."
-                  value={formData.description}
-                  onChange={handleChange}
-                  maxLength={1000}
-                  rows={8}
-                  required
-                />
-              </label>
-            </section>
+          {/* FORM */}
+          <form onSubmit={handleSubmit} className="product-form">
+            <div className="form-grid">
+              {/* LEFT SIDE */}
+              <div className="left-column">
+                {/* TITLE */}
+                <div className="form-group">
+                  <label htmlFor="cp-title">Product Title</label>
 
-            <section className="product-panel product-panel--pricing">
-              <div className="product-panel__header">
-                <span>02</span>
-                <div>
-                  <h2>Price</h2>
-                  <p>Set a clear amount and supported currency.</p>
-                </div>
-              </div>
-
-              <div className="product-price-row">
-                <label className="product-field">
-                  <span>Amount</span>
                   <input
-                    type="number"
-                    name="priceAmount"
-                    placeholder="2499"
-                    value={formData.priceAmount}
+                    id="cp-title"
+                    type="text"
+                    name="title"
+                    value={formData.title}
                     onChange={handleChange}
-                    min="1"
-                    step="0.01"
+                    placeholder="e.g. Oversized Linen Shirt"
                     required
                   />
-                </label>
+                </div>
 
-                <label className="product-field">
-                  <span>Currency</span>
-                  <select
-                    name="priceCurrency"
-                    value={formData.priceCurrency}
+                {/* DESCRIPTION */}
+                <div className="form-group">
+                  <label htmlFor="cp-description">Description</label>
+
+                  <textarea
+                    id="cp-description"
+                    name="description"
+                    value={formData.description}
                     onChange={handleChange}
+                    rows={5}
+                    placeholder="Describe the product — material, fit, details..."
+                  />
+                </div>
+
+                {/* PRICE */}
+                <div className="price-group">
+                  <label>Price</label>
+
+                  <div className="price-fields">
+                    <div className="amount-field">
+                      <span>Amount</span>
+
+                      <input
+                        type="number"
+                        name="priceAmount"
+                        value={formData.priceAmount}
+                        onChange={handleChange}
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        required
+                      />
+                    </div>
+
+                    <div className="currency-field">
+                      <span>Currency</span>
+
+                      <select
+                        name="priceCurrency"
+                        value={formData.priceCurrency}
+                        onChange={handleChange}
+                      >
+                        {CURRENCIES.map((currency) => (
+                          <option key={currency} value={currency}>
+                            {currency}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* RIGHT SIDE */}
+              <div className="right-column">
+                <div className="image-header">
+                  <label>Images</label>
+
+                  <span>
+                    {images.length}/{MAX_IMAGES}
+                  </span>
+                </div>
+
+                {/* DROP ZONE */}
+                {images.length < MAX_IMAGES && (
+                  <div
+                    className={`drop-zone ${isDragging ? "dragging" : ""}`}
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onClick={() => fileInputRef.current?.click()}
                   >
-                    <option value="INR">INR</option>
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
-                    <option value="JPY">JPY</option>
-                  </select>
-                </label>
-              </div>
-            </section>
+                    <div className="upload-icon">↑</div>
 
-            <section className="product-panel product-panel--images">
-              <div className="product-panel__header">
-                <span>03</span>
-                <div>
-                  <h2>Images</h2>
-                  <p>Upload up to 7 images. Selected files appear below.</p>
-                </div>
-              </div>
+                    <div className="drop-content">
+                      <p>
+                        Drop images here or
+                        <span> tap to upload</span>
+                      </p>
 
-              <label className="product-upload">
-                <input
-                  type="file"
-                  name="images"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageChange}
-                  disabled={images.length >= 7}
-                />
-                <span className="product-upload__icon" aria-hidden="true">
-                  +
-                </span>
-                <strong>Choose product images</strong>
-                <small>PNG, JPG, WEBP. Maximum 5MB each.</small>
-              </label>
+                      <small>Up to {MAX_IMAGES} images</small>
+                    </div>
 
-              <div className="product-preview" aria-live="polite">
-                <div className="product-preview__header">
-                  <h3>Preview</h3>
-                  <span>{images.length} selected</span>
-                </div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleFileChange}
+                      hidden
+                    />
+                  </div>
+                )}
 
-                {imagePreviews.length > 0 ? (
-                  <div className="product-preview__grid">
-                    {imagePreviews.map((image, index) => (
-                      <article className="product-preview__item" key={image.url}>
-                        <img src={image.url} alt={`Selected product ${index + 1}`} />
+                {/* PREVIEWS */}
+                {images.length > 0 && (
+                  <div className="preview-grid">
+                    {images.map((img, index) => (
+                      <div key={index} className="preview-card">
+                        <img src={img.preview} alt={`Preview ${index + 1}`} />
+
                         <button
                           type="button"
-                          onClick={() => handleRemoveImage(index)}
-                          aria-label={`Remove ${image.name}`}
+                          onClick={() => removeImage(index)}
                         >
                           Remove
                         </button>
-                      </article>
+                      </div>
                     ))}
-                  </div>
-                ) : (
-                  <div className="product-preview__empty">
-                    <span aria-hidden="true" />
-                    <p>Your selected images will preview here.</p>
                   </div>
                 )}
               </div>
-            </section>
-          </div>
+            </div>
 
-          {status.message && (
-            <p className={`create-product-status create-product-status--${status.type}`}>
-              {status.message}
-            </p>
-          )}
-
-          <div className="create-product-actions">
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create Product"}
-            </button>
-          </div>
-        </form>
-      </section>
-    </main>
+            {/* SUBMIT */}
+            <div className="submit-wrapper">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="submit-btn"
+              >
+                {isSubmitting ? "Publishing..." : "Publish Listing"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
   );
 };
 
