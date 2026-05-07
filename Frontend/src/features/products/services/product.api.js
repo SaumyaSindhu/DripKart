@@ -6,19 +6,29 @@ const productApiInstance = axios.create({
 });
 
 export async function createProduct(formData) {
+
   const response = await productApiInstance.post("/create", formData);
 
   return response.data;
 }
 
 export async function getSellerProducts() {
+
   const response = await productApiInstance.get("/seller");
 
   return response.data;
 }
 
 export async function getAllProducts() {
+
   const response = await productApiInstance.get("/");
 
   return response.data;
+}
+
+export async function getProductDetails(productId) {
+
+    const response = await productApiInstance.get(`/details/${productId}`);
+
+    return response.data
 }
