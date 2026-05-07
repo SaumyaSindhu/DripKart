@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useProduct } from "../hook/useProduct";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import "./home.scss";
 
@@ -26,6 +26,14 @@ const Home = () => {
       />
 
       <div className="home-page">
+        <nav className="product-navbar">
+          <Link to="/" className="brand-logo">
+            DRIPKART.
+          </Link>
+
+          <span className="back-link">{user?.fullname || "Guest"}</span>
+        </nav>
+
         <div className="home-container">
           <div className="hero-section">
             <span className="hero-subtitle">The Collection</span>

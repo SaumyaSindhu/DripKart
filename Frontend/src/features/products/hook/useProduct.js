@@ -33,7 +33,7 @@ export const useProduct = () => {
 
     async function handleGetProductDetails(productId) {
         
-        const data = await getProductDetails();
+        const data = await getProductDetails(productId);
 
         return data.product
     }
