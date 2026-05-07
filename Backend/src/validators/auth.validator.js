@@ -13,20 +13,26 @@ function validateRequest(req, res, next) {
 }
 
 export const validateRegisterUser = [
-    body("fullname")
-        .notEmpty().withMessage("Fullname is required"),
-    body("email")
-        .isEmail().withMessage("Invalid email format"),
-    body("contact")
-        .notEmpty().withMessage("Contact is required")
-        .matches(/^\d{10}$/).withMessage("Contact must be a 10-digit number"),
-    body("password")
-        .isLength({ min: 3 }).withMessage("Password must be at least 3 characters long"),
-    body("isSeller")
-        .isBoolean().withMessage("isSeller must either be true or false"),
+  body("fullname")
+    .notEmpty()
+    .withMessage("Fullname is required"),
+  body("email")
+    .isEmail()
+    .withMessage("Invalid email format"),
+  body("contact")
+    .notEmpty()
+    .withMessage("Contact is required")
+    .matches(/^\d{10}$/)
+    .withMessage("Contact must be a 10-digit number"),
+  body("password")
+    .isLength({ min: 3 })
+    .withMessage("Password must be at least 3 characters long"),
+  body("isSeller")
+    .isBoolean()
+    .withMessage("isSeller must either be true or false"),
 
-    validateRequest
-]
+  validateRequest,
+];
 
 export const validateLoginUser = [
     body("email")
