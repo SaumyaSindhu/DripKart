@@ -40,6 +40,7 @@ export async function createProductController(req, res) {
 }
 
 export async function getSellerProductsController(req, res) {
+
   const seller = req.user;
 
   try {
@@ -63,4 +64,14 @@ export async function getSellerProductsController(req, res) {
       message: "Internal Server Error",
     });
   }
+}
+
+export async function getAllProductsController(req, res) {
+
+  const products = await productModel.find()
+
+  return res.status(200).json({
+    message: "Products fetched successfully",
+    products
+  })
 }
