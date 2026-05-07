@@ -1,22 +1,24 @@
 import axios from "axios";
 
 const productApiInstance = axios.create({
-    baseURL: "http://localhost:3000/api/products",
-    withCredentials: true
+  baseURL: "http://localhost:3000/api/products",
+  withCredentials: true,
 });
 
-
 export async function createProduct(formData) {
+  const response = await productApiInstance.post("/create", formData);
 
-    const response = await productApiInstance.post("/create", formData)
-
-    return response.data;
-
+  return response.data;
 }
 
 export async function getSellerProducts() {
+  const response = await productApiInstance.get("/seller");
 
-    const response = await productApiInstance.get("/seller")
+  return response.data;
+}
 
-    return response.data;
+export async function getAllProducts() {
+  const response = await authApiInstance.get("/");
+
+  return response.data;
 }

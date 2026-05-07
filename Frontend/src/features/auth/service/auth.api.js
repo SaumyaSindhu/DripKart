@@ -34,10 +34,3 @@ export async function getMe() {
 
     return response.data;
 }
-
-export async function getAllProducts() {
-    
-    const response = await authApiInstance.get("/");
-
-    return response.data;
-}
