@@ -47,7 +47,7 @@ productRouter.get("/detail/:id", getProductDetailsController)
  * @desc Add a new variant to a product
  * @acess Private (Seller only)
  */
-productRouter.post("/:productId/variants", authenticateSeller, upload.array('images', 7), createProductValidator, addProductVariantController)
+productRouter.post("/:productId/variants", authenticateSeller, upload.array('images', 7), addProductVariantController)
 
 
 export default productRouter;

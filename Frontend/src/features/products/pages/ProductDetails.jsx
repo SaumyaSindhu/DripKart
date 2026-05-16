@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import { useProduct } from "../hook/useProduct";
 import "./productDetails.scss";
@@ -9,6 +9,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedAttributes, setSelectedAttributes] = useState({});
 
   const { handleGetProductDetails } = useProduct();
 
@@ -30,6 +31,75 @@ const ProductDetail = () => {
     fetchProductDetails();
   }, [productId]);
 
+  useEffect(() => {
+    if (product?.variants?.length > 0) {
+      setSelectedAttributes(product.variants[0].attributes || {});
+    }
+  }, [product]);
+
+  const activeVariant = useMemo(() => {
+    if (!product?.variants || product.variants.length === 0) return null;
+    return product.variants.find((v) => {
+      if (!v.attributes) return false;
+      const vKeys = Object.keys(v.attributes);
+      const sKeys = Object.keys(selectedAttributes);
+      const isMatch = vKeys.every(
+        (k) => v.attributes[k] === selectedAttributes[k],
+      );
+      // If they don't have exactly the same keys, they shouldn't perfectly match,
+      // but we might only care about matching what's available.
+      return vKeys.length === sKeys.length && isMatch;
+    });
+  }, [product, selectedAttributes]);
+
+  const availableAttributes = useMemo(() => {
+    if (!product?.variants) return {};
+    const attrs = {};
+    product.variants.forEach((variant) => {
+      if (variant.attributes) {
+        Object.entries(variant.attributes).forEach(([key, value]) => {
+          if (!attrs[key]) attrs[key] = new Set();
+          attrs[key].add(value);
+        });
+      }
+    });
+    Object.keys(attrs).forEach((key) => {
+      attrs[key] = Array.from(attrs[key]);
+    });
+    return attrs;
+  }, [product]);
+
+  useEffect(() => {
+    setSelectedImage(0);
+  }, [activeVariant]);
+
+  const handleAttributeChange = (attrName, value) => {
+    const newAttrs = { ...selectedAttributes, [attrName]: value };
+
+    // Find if an exact match exists for this combination
+    const exactMatch = product.variants.find((v) => {
+      const vAttrs = v.attributes || {};
+      return (
+        Object.keys(newAttrs).every((k) => newAttrs[k] === vAttrs[k]) &&
+        Object.keys(vAttrs).every((k) => newAttrs[k] === vAttrs[k])
+      );
+    });
+
+    if (exactMatch) {
+      setSelectedAttributes(exactMatch.attributes);
+    } else {
+      // Find any variant that has this newly selected attribute to fallback nicely
+      const fallbackVariant = product.variants.find(
+        (v) => v.attributes && v.attributes[attrName] === value,
+      );
+      if (fallbackVariant) {
+        setSelectedAttributes(fallbackVariant.attributes);
+      } else {
+        setSelectedAttributes(newAttrs);
+      }
+    }
+  };
+
   if (error) {
     return (
       <div className="loading-screen">
@@ -46,10 +116,17 @@ const ProductDetail = () => {
     );
   }
 
-  const images =
-    product.images && product.images.length > 0
-      ? product.images
-      : [{ url: "/snitch_editorial_warm.png" }];
+  // Fallbacks
+  const displayImages =
+    activeVariant?.images && activeVariant.images.length > 0
+      ? activeVariant.images
+      : product.images && product.images.length > 0
+        ? product.images
+        : [{ url: "/snitch_editorial_warm.png" }];
+
+  const displayPrice = activeVariant?.price?.amount
+    ? activeVariant.price
+    : product.price;
 
   return (
     <>
@@ -74,9 +151,9 @@ const ProductDetail = () => {
             {/* LEFT SIDE */}
             <div className="gallery-section">
               {/* THUMBNAILS */}
-              {images.length > 1 && (
+              {displayImages.length > 1 && (
                 <div className="thumbnail-list">
-                  {images.map((img, idx) => (
+                  {displayImages.map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => setSelectedImage(idx)}
@@ -93,18 +170,20 @@ const ProductDetail = () => {
               {/* MAIN IMAGE */}
               <div className="main-image-wrapper">
                 <img
-                  src={images[selectedImage]?.url || images[0].url}
+                  src={
+                    displayImages[selectedImage]?.url || displayImages[0].url
+                  }
                   alt={product.title}
                   className="main-image"
                 />
 
-                {images.length > 1 && (
+                {displayImages.length > 1 && (
                   <>
                     <button
                       className="nav-btn prev"
                       onClick={() =>
                         setSelectedImage((prev) =>
-                          prev === 0 ? images.length - 1 : prev - 1,
+                          prev === 0 ? displayImages.length - 1 : prev - 1,
                         )
                       }
                     >
@@ -115,7 +194,7 @@ const ProductDetail = () => {
                       className="nav-btn next"
                       onClick={() =>
                         setSelectedImage((prev) =>
-                          prev === images.length - 1 ? 0 : prev + 1,
+                          prev === displayImages.length - 1 ? 0 : prev + 1,
                         )
                       }
                     >
@@ -131,9 +210,49 @@ const ProductDetail = () => {
               <h1 className="product-title">{product.title}</h1>
 
               <div className="product-price">
-                {product.price?.currency}{" "}
-                {product.price?.amount?.toLocaleString()}
+                {displayPrice?.currency}{" "}
+                {displayPrice?.amount?.toLocaleString()}
               </div>
+
+              {/* Options / Variants */}
+              {Object.entries(availableAttributes).map(([attrName, values]) => (
+                <div key={attrName} className="variant-group">
+                  <h3>{attrName}</h3>
+
+                  <div className="variant-options">
+                    {values.map((val) => {
+                      const isSelected = selectedAttributes[attrName] === val;
+
+                      return (
+                        <button
+                          key={val}
+                          onClick={() => handleAttributeChange(attrName, val)}
+                          className={`variant-btn ${
+                            isSelected ? "selected" : ""
+                          }`}
+                        >
+                          {val}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              {/* Stock Information */}
+              {activeVariant && activeVariant.stock !== undefined && (
+                <div className="stock-info">
+                  <span
+                    className={
+                      activeVariant.stock > 0 ? "in-stock" : "out-stock"
+                    }
+                  >
+                    {activeVariant.stock > 0
+                      ? `${activeVariant.stock} in stock`
+                      : "Out of stock"}
+                  </span>
+                </div>
+              )}
 
               <div className="divider"></div>
 
@@ -174,6 +293,6 @@ const ProductDetail = () => {
       </div>
     </>
   );
-};
+};;
 
 export default ProductDetail;

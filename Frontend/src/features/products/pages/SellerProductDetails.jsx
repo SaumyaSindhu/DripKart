@@ -63,13 +63,13 @@ const SellerProductDetails = () => {
 
   const { productId } = useParams();
 
-  const { handleGetProductById, handleAddProductVariant } = useProduct();
+  const { handleGetProductDetails, handleAddProductVariant } = useProduct();
 
   async function fetchProductDetails() {
     setLoading(true);
 
     try {
-      const data = await handleGetProductById(productId);
+      const data = await handleGetProductDetails(productId);
 
       const prod = data?.product || data;
 
@@ -128,12 +128,13 @@ const SellerProductDetails = () => {
         ? Number(newVariant.price.amount)
         : undefined,
     };
-
+    
     setLocalVariants([...localVariants, variantToSave]);
-
+    
     setIsAddingVariant(false);
-
+    
     await handleAddProductVariant(productId, variantToSave);
+    
 
     setAttributeInputs([{ key: "", value: "" }]);
 
@@ -242,273 +243,280 @@ const SellerProductDetails = () => {
   }
 
   return (
-    <div className="seller-product-page">
-      {/* HEADER */}
-      <header className="seller-header">
-        <h1>
-          {product.title?.substring(0, 20)}
+    <>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+      />
 
-          {product.title?.length > 20 ? "..." : ""}
-        </h1>
-      </header>
+      <div className="seller-product-page">
+        {/* HEADER */}
+        <header className="seller-header">
+          <h1>
+            {product.title?.substring(0, 20)}
 
-      <main className="seller-main">
-        {/* PRODUCT INFO */}
-        <section className="product-info-section">
-          <div className="product-gallery">
-            <div className="main-product-image">
-              {product.images && product.images.length > 0 ? (
-                <img src={product.images[0].url} alt={product.title} />
-              ) : (
-                <div className="no-image">No Image</div>
+            {product.title?.length > 20 ? "..." : ""}
+          </h1>
+        </header>
+
+        <main className="seller-main">
+          {/* PRODUCT INFO */}
+          <section className="product-info-section">
+            <div className="product-gallery">
+              <div className="main-product-image">
+                {product.images && product.images.length > 0 ? (
+                  <img src={product.images[0].url} alt={product.title} />
+                ) : (
+                  <div className="no-image">No Image</div>
+                )}
+              </div>
+
+              {product.images && product.images.length > 1 && (
+                <div className="thumbnail-row">
+                  {product.images.slice(1).map((img, i) => (
+                    <img key={i} src={img.url} alt={`Thumb ${i}`} />
+                  ))}
+                </div>
               )}
             </div>
 
-            {product.images && product.images.length > 1 && (
-              <div className="thumbnail-row">
-                {product.images.slice(1).map((img, i) => (
-                  <img key={i} src={img.url} alt={`Thumb ${i}`} />
-                ))}
+            <div className="product-meta">
+              <h2>{product.title}</h2>
+
+              <p>{product.description}</p>
+
+              <div className="base-price">
+                {product.price?.amount} {product.price?.currency}
               </div>
-            )}
-          </div>
-
-          <div className="product-meta">
-            <h2>{product.title}</h2>
-
-            <p>{product.description}</p>
-
-            <div className="base-price">
-              {product.price?.amount} {product.price?.currency}
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* VARIANTS */}
-        <section className="variant-section">
-          <div className="variant-header">
-            <h3>Variants & Inventory</h3>
+          {/* VARIANTS */}
+          <section className="variant-section">
+            <div className="variant-header">
+              <h3>Variants & Inventory</h3>
 
-            {!isAddingVariant && (
-              <button
-                onClick={() => setIsAddingVariant(true)}
-                className="add-variant-btn"
-              >
-                <PlusIcon />
-                Add New Variant
-              </button>
-            )}
-          </div>
-
-          {/* ADD FORM */}
-          {isAddingVariant && (
-            <div className="variant-form">
-              <div className="form-top">
-                <h4>Create Variant</h4>
-
+              {!isAddingVariant && (
                 <button
-                  onClick={() => setIsAddingVariant(false)}
-                  className="cancel-btn"
+                  onClick={() => setIsAddingVariant(true)}
+                  className="add-variant-btn"
                 >
-                  Cancel
+                  <PlusIcon />
+                  Add New Variant
                 </button>
-              </div>
+              )}
+            </div>
 
-              <div className="variant-form-grid">
-                {/* LEFT */}
-                <div className="left-form">
-                  {/* ATTRIBUTES */}
-                  <div className="attribute-group">
-                    <label>Attributes</label>
+            {/* ADD FORM */}
+            {isAddingVariant && (
+              <div className="variant-form">
+                <div className="form-top">
+                  <h4>Create Variant</h4>
 
-                    <div className="attribute-list">
-                      {attributeInputs.map((attr, index) => (
-                        <div key={index} className="attribute-row">
-                          <input
-                            type="text"
-                            placeholder="Key"
-                            value={attr.key}
-                            onChange={(e) =>
-                              handleAttributeChange(
-                                index,
-                                "key",
-                                e.target.value,
-                              )
-                            }
-                          />
+                  <button
+                    onClick={() => setIsAddingVariant(false)}
+                    className="cancel-btn"
+                  >
+                    Cancel
+                  </button>
+                </div>
 
-                          <input
-                            type="text"
-                            placeholder="Value"
-                            value={attr.value}
-                            onChange={(e) =>
-                              handleAttributeChange(
-                                index,
-                                "value",
-                                e.target.value,
-                              )
-                            }
-                          />
+                <div className="variant-form-grid">
+                  {/* LEFT */}
+                  <div className="left-form">
+                    {/* ATTRIBUTES */}
+                    <div className="attribute-group">
+                      <label>Attributes (E.G. SIZE, COLOR)*</label>
 
-                          {attributeInputs.length > 1 && (
-                            <button
-                              onClick={() => handleRemoveAttribute(index)}
-                              className="remove-attribute-btn"
-                            >
+                      <div className="attribute-list">
+                        {attributeInputs.map((attr, index) => (
+                          <div key={index} className="attribute-row">
+                            <input
+                              type="text"
+                              placeholder="Key"
+                              value={attr.key}
+                              onChange={(e) =>
+                                handleAttributeChange(
+                                  index,
+                                  "key",
+                                  e.target.value,
+                                )
+                              }
+                            />
+
+                            <input
+                              type="text"
+                              placeholder="Value"
+                              value={attr.value}
+                              onChange={(e) =>
+                                handleAttributeChange(
+                                  index,
+                                  "value",
+                                  e.target.value,
+                                )
+                              }
+                            />
+
+                            {attributeInputs.length > 1 && (
+                              <button
+                                onClick={() => handleRemoveAttribute(index)}
+                                className="remove-attribute-btn"
+                              >
+                                <TrashIcon />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={handleAddAttribute}
+                        className="add-attribute-btn"
+                      >
+                        <PlusIcon />
+                        Add Attribute
+                      </button>
+                    </div>
+
+                    {/* STOCK */}
+                    <div className="stock-price-row">
+                      <div className="input-group">
+                        <label>Initial Stock</label>
+
+                        <input
+                          type="number"
+                          value={newVariant.stock}
+                          onChange={(e) =>
+                            setNewVariant({
+                              ...newVariant,
+                              stock: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div className="input-group">
+                        <label>Price amount (Optional)</label>
+
+                        <input
+                          type="number"
+                          value={newVariant.price.amount}
+                          onChange={(e) =>
+                            setNewVariant({
+                              ...newVariant,
+                              price: {
+                                ...newVariant.price,
+                                amount: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* RIGHT */}
+                  <div className="right-form">
+                    <div className="upload-header">
+                      <label>Image Upload</label>
+
+                      <span>
+                        {newVariant.images.length}
+                        /7
+                      </span>
+                    </div>
+
+                    {/* PREVIEW */}
+                    {newVariant.images.length > 0 && (
+                      <div className="preview-grid">
+                        {newVariant.images.map((img, index) => (
+                          <div key={index} className="preview-card">
+                            <img src={img.previewUrl} alt="Preview" />
+
+                            <button onClick={() => handleRemoveImage(index)}>
                               <TrashIcon />
                             </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
-                    <button
-                      onClick={handleAddAttribute}
-                      className="add-attribute-btn"
-                    >
-                      <PlusIcon />
-                      Add Attribute
-                    </button>
-                  </div>
-
-                  {/* STOCK */}
-                  <div className="stock-price-row">
-                    <div className="input-group">
-                      <label>Initial Stock</label>
-
+                    {/* INPUT */}
+                    {newVariant.images.length < 7 && (
                       <input
-                        type="number"
-                        value={newVariant.stock}
-                        onChange={(e) =>
-                          setNewVariant({
-                            ...newVariant,
-                            stock: e.target.value,
-                          })
-                        }
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageUpload}
+                        className="file-input"
                       />
-                    </div>
-
-                    <div className="input-group">
-                      <label>Price</label>
-
-                      <input
-                        type="number"
-                        value={newVariant.price.amount}
-                        onChange={(e) =>
-                          setNewVariant({
-                            ...newVariant,
-                            price: {
-                              ...newVariant.price,
-                              amount: e.target.value,
-                            },
-                          })
-                        }
-                      />
-                    </div>
+                    )}
                   </div>
                 </div>
 
-                {/* RIGHT */}
-                <div className="right-form">
-                  <div className="upload-header">
-                    <label>Image Upload</label>
-
-                    <span>
-                      {newVariant.images.length}
-                      /7
-                    </span>
-                  </div>
-
-                  {/* PREVIEW */}
-                  {newVariant.images.length > 0 && (
-                    <div className="preview-grid">
-                      {newVariant.images.map((img, index) => (
-                        <div key={index} className="preview-card">
-                          <img src={img.previewUrl} alt="Preview" />
-
-                          <button onClick={() => handleRemoveImage(index)}>
-                            <TrashIcon />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* INPUT */}
-                  {newVariant.images.length < 7 && (
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageUpload}
-                      className="file-input"
-                    />
-                  )}
+                <div className="save-wrapper">
+                  <button onClick={handleAddNewVariant} className="save-btn">
+                    Save Variant
+                  </button>
                 </div>
               </div>
+            )}
 
-              <div className="save-wrapper">
-                <button onClick={handleAddNewVariant} className="save-btn">
-                  Save Variant
-                </button>
+            {/* VARIANT LIST */}
+            {localVariants.length === 0 ? (
+              <div className="empty-variants">
+                No variants have been created yet.
               </div>
-            </div>
-          )}
-
-          {/* VARIANT LIST */}
-          {localVariants.length === 0 ? (
-            <div className="empty-variants">
-              No variants have been created yet.
-            </div>
-          ) : (
-            <div className="variant-grid">
-              {localVariants.map((variant, idx) => (
-                <div key={idx} className="variant-card">
-                  <div className="variant-content">
-                    <div className="variant-thumb">
-                      {variant.images && variant.images.length > 0 ? (
-                        <img src={variant.images[0].url} alt="Variant" />
-                      ) : (
-                        <div className="no-image">N/A</div>
-                      )}
-                    </div>
-
-                    <div className="variant-details">
-                      <div className="attribute-tags">
-                        {Object.entries(variant.attributes || {}).map(
-                          ([key, val]) => (
-                            <span key={key}>
-                              <strong>{key}:</strong> {val}
-                            </span>
-                          ),
+            ) : (
+              <div className="variant-grid">
+                {localVariants.map((variant, idx) => (
+                  <div key={idx} className="variant-card">
+                    <div className="variant-content">
+                      <div className="variant-thumb">
+                        {variant.images && variant.images.length > 0 ? (
+                          <img src={variant.images[0].url} alt="Variant" />
+                        ) : (
+                          <div className="no-image">N/A</div>
                         )}
                       </div>
 
-                      <div className="variant-price">
-                        {variant.price?.amount
-                          ? `${variant.price.amount} ${variant.price.currency}`
-                          : "Base Price"}
+                      <div className="variant-details">
+                        <div className="attribute-tags">
+                          {Object.entries(variant.attributes || {}).map(
+                            ([key, val]) => (
+                              <span key={key}>
+                                <strong>{key}:</strong> {val}
+                              </span>
+                            ),
+                          )}
+                        </div>
+
+                        <div className="variant-price">
+                          {variant.price?.amount
+                            ? `${variant.price.amount} ${variant.price.currency}`
+                            : "Base Price"}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* STOCK */}
-                  <div className="variant-stock">
-                    <label>Current Stock</label>
+                    {/* STOCK */}
+                    <div className="variant-stock">
+                      <label>Current Stock</label>
 
-                    <input
-                      type="number"
-                      value={variant.stock || 0}
-                      onChange={(e) => handleStockChange(idx, e.target.value)}
-                    />
+                      <input
+                        type="number"
+                        value={variant.stock || 0}
+                        onChange={(e) => handleStockChange(idx, e.target.value)}
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      </main>
-    </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </main>
+      </div>
+    </>
   );
 };
 

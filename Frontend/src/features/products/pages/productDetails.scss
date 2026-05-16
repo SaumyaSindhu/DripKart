@@ -513,3 +513,126 @@
         opacity: 0.5;
     }
 }
+
+/* =========================
+   VARIANT SECTION
+========================= */
+
+.variant-group {
+    margin-bottom: 1.5rem;
+
+    h3 {
+        margin-bottom: 0.75rem;
+
+        font-size: 10px;
+        font-weight: 500;
+
+        text-transform: uppercase;
+        letter-spacing: 0.24em;
+
+        color: #c9a96e;
+    }
+
+    .variant-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+
+        .variant-btn {
+            padding: 0.5rem 1rem;
+
+            border: 1px solid #d0c5b5;
+
+            background: transparent;
+
+            color: #1b1c1a;
+
+            cursor: pointer;
+
+            font-size: 11px;
+            font-weight: 500;
+
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+
+            transition:
+                all 0.3s ease;
+
+            &:hover {
+                border-color: #1b1c1a;
+            }
+
+            &.selected {
+                border-color: #1b1c1a;
+
+                background: #1b1c1a;
+
+                color: #fbf9f6;
+            }
+        }
+    }
+}
+
+/* =========================
+   STOCK INFO
+========================= */
+
+.stock-info {
+    margin-bottom: 1.5rem;
+
+    span {
+        font-size: 10px;
+        font-weight: 500;
+
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+
+        &.in-stock {
+            color: #15803d;
+        }
+
+        &.out-stock {
+            color: #b91c1c;
+        }
+    }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+    .variant-group {
+        .variant-options {
+            gap: 0.4rem;
+
+            .variant-btn {
+                padding: 0.45rem 0.9rem;
+
+                font-size: 10px;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .variant-group {
+        margin-bottom: 1.25rem;
+
+        h3 {
+            font-size: 9px;
+        }
+
+        .variant-options {
+            .variant-btn {
+                width: 100%;
+            }
+        }
+    }
+
+    .stock-info {
+        span {
+            font-size: 9px;
+        }
+    }
+}
