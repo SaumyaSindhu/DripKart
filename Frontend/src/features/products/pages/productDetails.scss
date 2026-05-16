@@ -17,10 +17,6 @@
 
     padding-bottom: 84px;
 
-    /* =========================
-       NAVBAR
-    ========================= */
-
     .product-navbar {
         padding: 34px 40px 22px;
 
@@ -85,10 +81,6 @@
             display: flex;
             gap: 64px;
             align-items: stretch;
-
-            /* =========================
-               GALLERY
-            ========================= */
 
             .gallery-section {
                 flex: 0 1 62%;
@@ -199,10 +191,6 @@
                 }
             }
 
-            /* =========================
-               DETAILS
-            ========================= */
-
             .details-section {
                 flex: 1 1 0;
                 width: auto;
@@ -267,8 +255,6 @@
                     }
                 }
 
-                /* ACTIONS */
-
                 .action-buttons {
                     display: flex;
                     flex-direction: column;
@@ -317,8 +303,6 @@
                     }
                 }
 
-                /* EXTRA INFO */
-
                 .extra-info {
                     display: flex;
                     flex-direction: column;
@@ -345,10 +329,6 @@
         }
     }
 
-    /* =========================
-       LOADING SCREEN
-    ========================= */
-
     .loading-screen {
         min-height: 100vh;
 
@@ -370,10 +350,6 @@
             animation: pulse 1.6s infinite;
         }
     }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
 
     @media (max-width: 1200px) {
         .product-detail-container {
