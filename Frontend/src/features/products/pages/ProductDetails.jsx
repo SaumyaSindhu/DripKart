@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import { useProduct } from "../hook/useProduct";
+import { useCart } from "../../cart/hook/useCart";
 import "./productDetails.scss";
 
-const ProductDetail = () => {
+const ProductDetails = () => {
   const { productId } = useParams();
 
   const [product, setProduct] = useState(null);
@@ -12,6 +13,7 @@ const ProductDetail = () => {
   const [selectedAttributes, setSelectedAttributes] = useState({});
 
   const { handleGetProductDetails } = useProduct();
+  const { handleAddItem } = useCart();
 
   const navigate = useNavigate();
 
@@ -265,7 +267,17 @@ const ProductDetail = () => {
 
               {/* ACTIONS */}
               <div className="action-buttons">
-                <button className="add-cart-btn">Add to Cart</button>
+                <button 
+                  className="add-cart-btn" 
+                  onClick={() => { 
+                    handleAddItem({
+                      productId: product._id,
+                      variantId: activeVariant._id
+                    })
+                  }}
+                  >
+                    Add to Cart
+                </button>
 
                 <button className="buy-now-btn">Buy Now</button>
               </div>
@@ -295,4 +307,4 @@ const ProductDetail = () => {
   );
 };;
 
-export default ProductDetail;
+export default ProductDetails;
