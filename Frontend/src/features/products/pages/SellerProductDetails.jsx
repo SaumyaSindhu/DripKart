@@ -126,7 +126,7 @@ const SellerProductDetails = () => {
       attributes: cleanAttributes,
       price: newVariant.price.amount
         ? Number(newVariant.price.amount)
-        : undefined,
+        : undefined, // price is optional
     };
     
     setLocalVariants([...localVariants, variantToSave]);
@@ -150,7 +150,7 @@ const SellerProductDetails = () => {
   };
 
   const handleAddAttribute = () => {
-    setAttributeInputs((prev) => [...prev, { key: "", value: "" }]);
+    setAttributeInputs(prev => [...prev, { key: "", value: "" }]);
   };
 
   const handleAttributeChange = (index, field, value) => {
@@ -162,13 +162,13 @@ const SellerProductDetails = () => {
 
     const newAttrsObj = {};
 
-    updatedInputs.forEach((attr) => {
+    updatedInputs.forEach(attr => {
       if (attr.key.trim() !== "") {
         newAttrsObj[attr.key.trim()] = attr.value;
       }
     });
 
-    setNewVariant((prev) => ({
+    setNewVariant(prev => ({
       ...prev,
       attributes: newAttrsObj,
     }));
@@ -181,7 +181,7 @@ const SellerProductDetails = () => {
 
     const newAttrsObj = {};
 
-    updatedInputs.forEach((attr) => {
+    updatedInputs.forEach(attr => {
       if (attr.key.trim() !== "") {
         newAttrsObj[attr.key.trim()] = attr.value;
       }
