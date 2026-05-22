@@ -1,9 +1,208 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useCart } from "../hook/useCart";
+import { Link, useNavigate } from "react-router";
+
+import "./cart.scss";
 
 const Cart = () => {
-  return (
-    <div>Cart</div>
-  )
-}
+  const cartItems = useSelector((state) => state.cart.items);
 
-export default Cart
+  const { handleGetCart } = useCart();
+
+  const navigate = useNavigate();
+
+  const [quantities, setQuantities] = useState({});
+
+  useEffect(() => {
+    handleGetCart();
+  }, []);
+
+  useEffect(() => {
+    if (cartItems?.length) {
+      const initial = {};
+
+      cartItems.forEach((item) => {
+        initial[item._id] = item.quantity ?? 1;
+      });
+
+      setQuantities(initial);
+    }
+  }, [cartItems]);
+
+  const changeQty = (id, delta) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [id]: Math.max(1, (prev[id] ?? 1) + delta),
+    }));
+  };
+
+  const getVariantDetails = (product, variantId) => {
+    if (!product?.variants || !variantId) return null;
+
+    return product.variants.find((variant) => variant._id === variantId);
+  };
+
+  const getDisplayImage = (product, variant) => {
+    if (variant?.images?.length) {
+      return variant.images[0].url;
+    }
+
+    if (product?.images?.length) {
+      return product.images[0].url;
+    }
+
+    return null;
+  };
+
+  const formatCurrency = (amount, currency = "INR") =>
+    `${currency} ${Number(amount).toLocaleString("en-IN")}`;
+
+  if (!cartItems?.length) {
+    return (
+      <div className="cart-empty-page">
+        <nav className="cart-navbar">
+          <Link to="/" className="brand-logo">
+            Snitch.
+          </Link>
+
+          <button onClick={() => navigate(-1)} className="back-btn">
+            Return to Archive
+          </button>
+        </nav>
+
+        <div className="empty-content">
+          <h1>Your selection is empty.</h1>
+
+          <p>Curate your collection</p>
+
+          <Link to="/" className="explore-btn">
+            Explore the Archive
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const subtotal = cartItems.reduce((acc, item) => {
+    const amount = item.price?.amount || item.product?.price?.amount || 0;
+
+    return acc + amount * (quantities[item._id] || 1);
+  }, 0);
+
+  return (
+    <div className="cart-page">
+      <div className="cart-container">
+        {/* LEFT */}
+        <div className="cart-left">
+          <div className="cart-heading">
+            <h1>Your Selection</h1>
+
+            <p>
+              {cartItems.length} {cartItems.length === 1 ? "piece" : "pieces"}
+            </p>
+          </div>
+
+          <div className="cart-list">
+            {cartItems.map((item) => {
+              const { product, variant: variantId, price, _id } = item;
+
+              const variantDetail = getVariantDetails(product, variantId);
+
+              const imageUrl = getDisplayImage(product, variantDetail);
+
+              const displayPrice =
+                price || variantDetail?.price || product?.price;
+
+              const qty = quantities[_id] || 1;
+
+              const attributes = variantDetail?.attributes || {};
+
+              return (
+                <div key={_id} className="cart-card">
+                  <div className="product-image">
+                    {imageUrl ? (
+                      <img src={imageUrl} alt={product?.title} />
+                    ) : (
+                      <div className="image-placeholder"></div>
+                    )}
+                  </div>
+
+                  <div className="product-info">
+                    <div>
+                      <h2>{product?.title}</h2>
+
+                      {Object.keys(attributes).length > 0 && (
+                        <div className="attribute-list">
+                          {Object.entries(attributes).map(([key, val]) => (
+                            <span key={key}>{val}</span>
+                          ))}
+                        </div>
+                      )}
+
+                      <p className="price">
+                        {displayPrice
+                          ? formatCurrency(
+                              displayPrice.amount,
+                              displayPrice.currency,
+                            )
+                          : "—"}
+                      </p>
+                    </div>
+
+                    <div className="bottom-row">
+                      <div className="qty-box">
+                        <button onClick={() => changeQty(_id, -1)}>−</button>
+
+                        <span>{qty}</span>
+
+                        <button onClick={() => changeQty(_id, 1)}>+</button>
+                      </div>
+
+                      <button className="remove-btn">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* RIGHT */}
+        <div className="cart-right">
+          <div className="summary-box">
+            <h2>The Total</h2>
+
+            <div className="summary-row">
+              <span>Subtotal</span>
+
+              <span>{formatCurrency(subtotal)}</span>
+            </div>
+
+            <div className="summary-row">
+              <span>Shipping</span>
+
+              <span>
+                {subtotal >= 15000 ? "Complimentary" : "Calculated later"}
+              </span>
+            </div>
+
+            <div className="summary-total">
+              <span>Total</span>
+
+              <span>{formatCurrency(subtotal)}</span>
+            </div>
+
+            <button className="checkout-btn">Proceed to Checkout</button>
+
+            <button className="continue-btn" onClick={() => navigate("/")}>
+              Continue Shopping
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Cart;

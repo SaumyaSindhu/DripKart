@@ -138,16 +138,6 @@ const ProductDetails = () => {
       />
 
       <div className="product-detail-page">
-        <nav className="product-navbar">
-          <Link to="/" className="brand-logo">
-            DRIPKART.
-          </Link>
-
-          <button onClick={() => navigate(-1)} className="back-link">
-            Return to Archive
-          </button>
-        </nav>
-
         <div className="product-detail-container">
           <div className="product-layout">
             {/* LEFT SIDE */}
