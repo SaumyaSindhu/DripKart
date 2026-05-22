@@ -12,3 +12,9 @@ export async function addItem({ productId, variantId }) {
 
     return response.data;
 }
+
+export async function getCart() {
+    const response = await cartApiInstance.get("/");
+
+    return response.data;
+}
