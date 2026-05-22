@@ -1,4 +1,4 @@
-import { addItem, getCart } from "../service/cart.api";
+import { addItem, getCart, incrementCartItemApi } from "../service/cart.api";
 import { useDispatch } from "react-redux";
 import { addItem as addItemToCart, setCart } from "../state/cart.slice";
 
@@ -17,5 +17,10 @@ export const useCart = () => {
         dispatch(setCart(data.cart.items))
     }
 
-    return { handleAddItem, handleGetCart }
+    async function handleIncrementCartItem({ productId, variantId }) {
+        const data = await incrementCartItemApi({ productId, variantId })
+        dispatch(incrementCartItem({ productId, variantId }))
+    }
+
+    return { handleAddItem, handleGetCart, handleIncrementCartItem }
 }

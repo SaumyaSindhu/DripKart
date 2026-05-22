@@ -19,7 +19,7 @@ export async function getCart() {
     return response.data;
 }
 
-export async function incrementCartItem({ productId, variantId }) {
+export async function incrementCartItemApi({ productId, variantId }) {
     const response = await cartApiInstance.patch(`/quantity/increment/${productId}/${variantId}`);
 
     return response.data;
