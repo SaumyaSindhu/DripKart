@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useCart } from "../hook/useCart";
 import { Link, useNavigate } from "react-router";
@@ -8,34 +8,13 @@ import "./cart.scss";
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
 
-  const { handleGetCart } = useCart();
+  const { handleGetCart, handleIncrementCartItem } = useCart();
 
   const navigate = useNavigate();
 
-  const [quantities, setQuantities] = useState({});
-
   useEffect(() => {
     handleGetCart();
-  }, []);
-
-  useEffect(() => {
-    if (cartItems?.length) {
-      const initial = {};
-
-      cartItems.forEach((item) => {
-        initial[item._id] = item.quantity ?? 1;
-      });
-
-      setQuantities(initial);
-    }
-  }, [cartItems]);
-
-  const changeQty = (id, delta) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [id]: Math.max(1, (prev[id] ?? 1) + delta),
-    }));
-  };
+  }, [handleGetCart]);
 
   const getVariantDetails = (product, variantId) => {
     if (!product?.variants || !variantId) return null;
@@ -87,7 +66,7 @@ const Cart = () => {
   const subtotal = cartItems.reduce((acc, item) => {
     const amount = item.price?.amount || item.product?.price?.amount || 0;
 
-    return acc + amount * (quantities[item._id] || 1);
+    return acc + amount * (item.quantity || 1);
   }, 0);
 
   return (
@@ -105,7 +84,8 @@ const Cart = () => {
 
           <div className="cart-list">
             {cartItems.map((item) => {
-              const { product, variant: variantId, price, _id } = item;
+              const { _id: cartItemId, product, variant: variantId, price } = item;
+              const productId = product?._id;
 
               const variantDetail = getVariantDetails(product, variantId);
 
@@ -114,12 +94,12 @@ const Cart = () => {
               const displayPrice =
                 price || variantDetail?.price || product?.price;
 
-              const qty = quantities[_id] || 1;
+              const qty = item.quantity || 1;
 
               const attributes = variantDetail?.attributes || {};
 
               return (
-                <div key={_id} className="cart-card">
+                <div key={cartItemId} className="cart-card">
                   <div className="product-image">
                     {imageUrl ? (
                       <img src={imageUrl} alt={product?.title} />
@@ -152,11 +132,11 @@ const Cart = () => {
 
                     <div className="bottom-row">
                       <div className="qty-box">
-                        <button onClick={() => changeQty(_id, -1)}>−</button>
+                        <button type="button" disabled>-</button>
 
                         <span>{qty}</span>
 
-                        <button onClick={() => changeQty(_id, 1)}>+</button>
+                        <button onClick={() => handleIncrementCartItem({ productId, variantId })}>+</button>
                       </div>
 
                       <button className="remove-btn">Remove</button>
@@ -206,3 +186,4 @@ const Cart = () => {
 };
 
 export default Cart;
+

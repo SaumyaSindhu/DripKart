@@ -13,7 +13,7 @@ export async function addToCartController(req, res) {
     });
 
     if (!product) {
-        res.status(404).json({
+        return res.status(404).json({
             message: "Product not found"
         })
     }
@@ -27,21 +27,21 @@ export async function addToCartController(req, res) {
     if (isProductAlreadyInCart) {
         const quantityInCart = cart.items.find(item => item.product.toString() === productId && item.variant?.toString() === variantId)
 
-        if (quantityInCart + quantity > stock) {
+        if (quantityInCart.quantity + quantity > stock) {
             return res.status(400).json({
-                message: `Only ${stock} items left in stock and you already have ${quantityInCart} items in your cart`
-            })
-
-            await cartModel.findOneAndUpdate(
-                { user: req.user._id, "items.product": productId, "items.variant": variantId },
-                { $inc: { "items.$.quantity": quantity }},
-                { new: true }
-            )
-
-            return res.status(200).json({
-                message: "Cart updates successfully"
+                message: `Only ${stock} items left in stock and you already have ${quantityInCart.quantity} items in your cart`
             })
         }
+
+        await cartModel.findOneAndUpdate(
+            { user: req.user._id, "items.product": productId, "items.variant": variantId },
+            { $inc: { "items.$.quantity": quantity }},
+            { new: true }
+        )
+
+        return res.status(200).json({
+            message: "Cart updated successfully"
+        })
     }
 
     if (quantity > stock) {

@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit" ;
-import { incrementCartItem } from "../service/cart.api";
 
 const cartSlice = createSlice({
     name: "cart",
@@ -17,7 +16,7 @@ const cartSlice = createSlice({
             const { productId, variantId } = action.payload
 
             state.items = state.items.map(item => {
-                if (item.productId === productId && item.variantId === variantId) {
+                if (item.product._id === productId && item.variant === variantId) {
                     return { ...item, quantity: item.quantity + 1 }
                 } else {
                     return item
